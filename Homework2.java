@@ -11,10 +11,14 @@ public class Homework2 {
 	static int count;
 	static final int N = 100;
 	static String Array[] = new String [N];
+	static boolean doub = false;
 	
 	public static void AddTail() {
 		String element;
 		element=in.nextLine();
+		if (element.length()==0) {
+			element = in.nextLine();
+		}
 		Array[count]=element;
 		count++;
 	}
@@ -26,6 +30,9 @@ public class Homework2 {
 			}
 		else {
 			element=in.nextLine();
+			if (element.length()==0) {
+				element = in.nextLine();
+			}
 		for (int i=count;i>0;i--) {
 			Array[i]=Array[i-1];
 		}
@@ -76,40 +83,76 @@ public class Homework2 {
 		}
 	}
 	
-	public static boolean Comp (String Arr, String ArrNext) {
-		int countL; boolean flag1 = false, flag2 = false;
-		if (Arr.length()<ArrNext.length()) {
-			countL=Arr.length();
-		}
-		else countL = ArrNext.length();
-		for (int i=0;i<countL;i++) {
-			if (Arr.charAt(i)<ArrNext.charAt(i)) {
-				flag1 = false; flag2 = false; break;
+	public static boolean IfNum (String Arr, String ArrNext) {
+		boolean flag=true; int countAnother=0;
+		for (int i=0;i<Arr.length() && flag;i++) {
+			if ((int)Arr.charAt(i)==44) {
+				countAnother++; doub=true;
 			}
-			else if (Arr.charAt(i)>ArrNext.charAt(i)) {
-				flag1 = true; flag2 = false; break;
+			if ((int)Arr.charAt(i)>57 || (int)Arr.charAt(i)<48 || countAnother>1) {
+				flag = false;
 			}
-			else flag2 = true;
 		}
-		if (flag2) {
-			if (countL==Arr.length())
-				flag1=true;
+		countAnother=0;
+		for (int i=0;i<ArrNext.length() && flag;i++) {
+			if ((int)ArrNext.charAt(i)==44) {
+				countAnother++; doub=true;
+			}
+			if ((int)ArrNext.charAt(i)>57 || (int)ArrNext.charAt(i)<48 || countAnother>1) {
+				flag = false;
+			}
+		}
+		return flag;
+	}
+	
+	public static boolean CompStr (String Arr, String ArrNext) {
+		int countL; boolean flag1 = false, flag2 = false;//флаг 1 это для символов, флаг 2 это для длин строк
+		if (IfNum(Arr,ArrNext) && !doub) {
+			int i1 = Integer.parseInt(Arr);
+			int i2 = Integer.parseInt(ArrNext);
+			if (i1>i2) flag1 =true;
 			else flag1=false;
 		}
+		else if (IfNum(Arr,ArrNext) && doub) {
+			double d1 = Double.parseDouble(Arr);
+			double d2 = Double.parseDouble(ArrNext);
+			if (d1>d2) flag1=true;
+			else flag1=false;
+		}
+		else {
+			if (Arr.length()<ArrNext.length()) {
+				countL=Arr.length();
+			}
+			else countL = ArrNext.length();
+			for (int i=0;i<countL;i++) {
+				if (Arr.charAt(i)<ArrNext.charAt(i)) {
+					flag1 = false; flag2 = false; break;
+				}
+				else if (Arr.charAt(i)>ArrNext.charAt(i)) {
+					flag1 = true; flag2 = false; break;
+				}
+				else flag2 = true;
+			}
+			if (flag2) {
+				if (countL==Arr.length())
+					flag1=false;
+				else flag1=true;//если сравниваемые части строк равны, то меньшая по длине - меньше
+			}
+		}
+		
 		return flag1;
 	}
 	
 	public static void Sort() {
 		for (int i=count-1;i>=0;i--) {
 			for (int j=0; j<i;j++) {
-				if (Comp(Array[j],Array[j+1]))
-			      {
+				if (CompStr(Array[j],Array[j+1]))
+			    {
 			        String tmp = Array[j];
 			        Array[j] = Array[j + 1];
 			        Array[j + 1] = tmp;
-			      }
-			}
-			
+			    }
+			}	
 		}
 	}
 	
@@ -158,6 +201,7 @@ public class Homework2 {
 		}
 	}
 	public static void main(String[] args) throws IOException {
+		in.useLocale(Locale.US);
 		count=0;
 		Menu();
 	}
